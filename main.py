@@ -4,7 +4,7 @@ import random
 import os
 from datetime import datetime
 
-from aiogram import Bot, Dispatcher, types
+from aiogram import Bot, Dispatcher, types, F # Ƙara F anan
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import Message
@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 # ====== CONFIG ======
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-GROUP_CHAT_ID = os.getenv("GROUP_CHAT_ID") # Kar a canza shi zuwa int a nan
+GROUP_CHAT_ID = os.getenv("GROUP_CHAT_ID")
 POST_INTERVAL_HOURS = 4
 
 PAIRS = ['DOGE/USDT', 'BCH/USDT', 'ETH/USDT', 'ARB/USDT', 'OP/USDT']
@@ -47,7 +47,6 @@ async def send_trade_signal():
 💥 <b>Leverage:</b> {leverage}x (Isolated)
 🕒 <i>{datetime.now().strftime('%Y-%m-%d %H:%M')}</i>
         """
-        # Tabbatar cewa GROUP_CHAT_ID an canza shi zuwa int anan lokacin amfani da shi
         await bot.send_message(chat_id=int(GROUP_CHAT_ID), text=message)
         logging.info(f"An aika siginar ciniki zuwa {GROUP_CHAT_ID}")
     except Exception as e:
@@ -60,7 +59,7 @@ async def signal_loop():
         await asyncio.sleep(POST_INTERVAL_HOURS * 3600)
 
 # ====== /start handler ======
-@dp.message(commands=["start"])
+@dp.message(F.text == "/start") # Gyara anan
 async def start_handler(message: Message):
     await message.answer("🤖 BashTrading Bot is active and ready to send signals!")
 
@@ -75,11 +74,9 @@ async def main():
         return
 
     try:
-        # A fara signal_loop a matsayin aikin baya
         asyncio.create_task(signal_loop())
 
         await bot.delete_webhook(drop_pending_updates=True)
-        # on_startup yanzu zai kasance jerin abubuwan da za a kira, amma tun da muna fara shi da hannu, za mu iya cire shi daga nan.
         await dp.start_polling(bot, polling_timeout=60, handle_signals=True, close_bot_session=True, shutdown_polling=True)
     except TokenValidationError:
         print("❌ BOT_TOKEN is invalid. Please check your .env file.")
