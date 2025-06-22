@@ -1,15 +1,18 @@
 import logging
 import asyncio
 import random
+import os
+from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher, types
 from aiogram.types import ParseMode
 from aiogram.utils import executor
 from datetime import datetime
 
-# ====== CONFIG ======
-BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE'  # Replace with @BashTrading_Bot token
-GROUP_CHAT_ID = -1001234567890      # Replace with your signal group ID
-POST_INTERVAL_HOURS = 4            # Every 4 hours (2x/day approx)
+# ====== LOAD ENV CONFIG ======
+load_dotenv()
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+GROUP_CHAT_ID = int(os.getenv("GROUP_CHAT_ID"))
+POST_INTERVAL_HOURS = 4  # Post every 4 hours
 
 # Signal Template Settings
 PAIRS = ['DOGE/USDT', 'BCH/USDT', 'ETH/USDT', 'ARB/USDT', 'OP/USDT']
